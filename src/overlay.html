@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>Bewegungspause</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 35%, #1e293b 0%, #0f172a 65%, #0a0f1a 100%);
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+  }
+  .wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 22px;
+    animation: fade-in 0.35s ease-out;
+  }
+  @keyframes fade-in {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .bell-badge {
+    width: 128px;
+    height: 128px;
+    border-radius: 32px;
+    background: linear-gradient(145deg, #2f7ff2, #1d5fd1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 40px rgba(47, 127, 242, 0.35);
+    margin-bottom: 6px;
+  }
+  .bell-icon {
+    width: 64px;
+    height: 64px;
+    transform-origin: 50% 15%;
+    animation: ring 2.2s ease-in-out infinite;
+  }
+  @keyframes ring {
+    0%, 35%, 100% { transform: rotate(0deg); }
+    5% { transform: rotate(-14deg); }
+    10% { transform: rotate(11deg); }
+    15% { transform: rotate(-8deg); }
+    20% { transform: rotate(5deg); }
+    25% { transform: rotate(-3deg); }
+    30% { transform: rotate(0deg); }
+  }
+
+  h1 {
+    font-size: 36px;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  p#message {
+    font-size: 17px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 480px;
+    line-height: 1.5;
+  }
+  button#close {
+    margin-top: 22px;
+    padding: 13px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 999px;
+    background: #2f7ff2;
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.15s ease;
+  }
+  button#close:hover { background: #4a90f5; }
+  button#close:active { transform: scale(0.97); }
+  .hint {
+    margin-top: 4px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bell-badge">
+      <svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+    </div>
+    <h1>Zeit, dich zu bewegen!</h1>
+    <p id="message">Steh kurz auf, streck dich oder geh ein paar Schritte.</p>
+    <button id="close">Weiter arbeiten</button>
+    <div class="hint">Oder Esc drücken</div>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const message = params.get('message');
+    if (message) {
+      document.getElementById('message').textContent = message;
+    }
+
+    const SOUND_PATTERNS = {
+      chime: [{ freq: 880, start: 0, dur: 0.25 }, { freq: 1175, start: 0.18, dur: 0.35 }],
+      ping: [{ freq: 1200, start: 0, dur: 0.15 }],
+      bell: [{ freq: 660, start: 0, dur: 0.6 }],
+      rising: [{ freq: 523, start: 0, dur: 0.12 }, { freq: 659, start: 0.1, dur: 0.12 }, { freq: 784, start: 0.2, dur: 0.3 }],
+    };
+
+    function playSound(name) {
+      const pattern = SOUND_PATTERNS[name];
+      if (!pattern) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = ctx.currentTime;
+        pattern.forEach(({ freq, start, dur }) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0, now + start);
+          gain.gain.linearRampToValueAtTime(0.25, now + start + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(now + start);
+          osc.stop(now + start + dur + 0.05);
+        });
+      } catch (e) {
+        // ignore – sound is a nice-to-have, never block the overlay on it
+      }
+    }
+
+    playSound(params.get('sound'));
+
+    document.getElementById('close').addEventListener('click', () => window.overlayApi.close());
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') window.overlayApi.close();
+    });
+  </script>
+</body>
+</html>
