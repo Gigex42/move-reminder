@@ -11,6 +11,8 @@ const playSoundButton = document.getElementById('playSound');
 const soundPickerRow = document.getElementById('soundPickerRow');
 const soundToggleRow = document.getElementById('soundToggleRow');
 const soundToggleInput = document.getElementById('soundToggle');
+const overlayDurationRow = document.getElementById('overlayDurationRow');
+const overlayDurationSelect = document.getElementById('overlayDuration');
 
 let lastSoundChoice = 'chime';
 const startTimeInput = document.getElementById('startTime');
@@ -67,6 +69,7 @@ function updateSoundRowVisibility() {
   const isFullscreen = displayModeSelect.value === 'fullscreen';
   soundPickerRow.hidden = !isFullscreen;
   soundToggleRow.hidden = isFullscreen;
+  overlayDurationRow.hidden = !isFullscreen;
 }
 
 soundSelect.addEventListener('change', () => {
@@ -124,6 +127,7 @@ function applySettingsToForm(settings) {
   soundSelect.value = settings.sound || 'chime';
   if (settings.sound && settings.sound !== 'none') lastSoundChoice = settings.sound;
   soundToggleInput.checked = (settings.sound || 'chime') !== 'none';
+  overlayDurationSelect.value = String(settings.overlayDuration ?? 30);
   updateSoundRowVisibility();
   startTimeInput.value = settings.startTime || '09:00';
   endTimeInput.value = settings.endTime || '17:00';
@@ -172,6 +176,7 @@ function readFormAsSettings() {
     displayMode: displayModeSelect.value,
     skipWhenIdle: skipWhenIdleInput.checked,
     sound: soundSelect.value,
+    overlayDuration: Number(overlayDurationSelect.value),
     startTime: startTimeInput.value || '09:00',
     endTime: endTimeInput.value || '17:00',
     days: { ...currentDays },

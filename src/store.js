@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS = {
   displayMode: 'notification',
   skipWhenIdle: true,
   sound: 'chime',
+  overlayDuration: 30,
   startTime: '09:00',
   endTime: '17:00',
   messages: DEFAULT_MESSAGES,

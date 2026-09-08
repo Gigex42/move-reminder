@@ -61,7 +61,7 @@ function openSettingsWindow() {
 
   settingsWindow = new BrowserWindow({
     width: 440,
-    height: 740,
+    height: 780,
     resizable: false,
     title: 'Bewegungs-Reminder – Einstellungen',
     webPreferences: {
@@ -121,7 +121,11 @@ function showFullscreenOverlay(settings, message) {
     win.setAlwaysOnTop(true, 'screen-saver');
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     win.loadFile(path.join(__dirname, 'overlay.html'), {
-      query: { message, sound: settings.sound || 'none' },
+      query: {
+        message,
+        sound: settings.sound || 'none',
+        duration: String(settings.overlayDuration ?? 30),
+      },
     });
 
     win.on('closed', () => {
@@ -200,6 +204,10 @@ function updateTrayTooltip() {
 
 function isUserAway() {
   const settings = loadSettings();
+
+  if (overlayWindows.length > 0) {
+    return true;
+  }
 
   if (isManuallyPaused()) {
     return true;

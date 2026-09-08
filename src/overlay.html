@@ -91,6 +91,10 @@
     font-size: 12px;
     color: rgba(255, 255, 255, 0.35);
   }
+  .countdown {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
+  }
 </style>
 </head>
 <body>
@@ -105,6 +109,7 @@
     <p id="message">Steh kurz auf, streck dich oder geh ein paar Schritte.</p>
     <button id="close">Weiter arbeiten</button>
     <div class="hint">Oder Esc drücken</div>
+    <div class="countdown" id="countdown"></div>
   </div>
   <script>
     const params = new URLSearchParams(location.search);
@@ -149,6 +154,25 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') window.overlayApi.close();
     });
+
+    const duration = parseInt(params.get('duration'), 10);
+    if (duration > 0) {
+      let remaining = duration;
+      const countdownEl = document.getElementById('countdown');
+      const updateCountdown = () => {
+        countdownEl.textContent = `Schließt automatisch in ${remaining}s`;
+      };
+      updateCountdown();
+      const intervalId = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          clearInterval(intervalId);
+          window.overlayApi.close();
+        } else {
+          updateCountdown();
+        }
+      }, 1000);
+    }
   </script>
 </body>
 </html>
