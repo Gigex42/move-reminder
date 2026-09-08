@@ -1,7 +1,8 @@
 {
-  "name": "move-reminder",
+  "name": "auszeit",
+  "productName": "Auszeit",
   "version": "0.1.0",
-  "description": "Erinnerung, sich am Arbeitsplatz regelmäßig zu bewegen",
+  "description": "Erinnerung, sich am Arbeitsplatz regelmäßig eine kleine Auszeit zu nehmen",
   "main": "src/main.js",
   "private": true,
   "author": "Daniel Reiter",
@@ -15,8 +16,8 @@
     "electron-builder": "^25.0.0"
   },
   "build": {
-    "appId": "de.reiter.movereminder",
-    "productName": "Bewegungs-Reminder",
+    "appId": "de.reiter.auszeit",
+    "productName": "Auszeit",
     "files": [
       "src/**/*",
       "assets/**/*",
@@ -43,7 +44,7 @@
       {
         "provider": "github",
         "owner": "Gigex42",
-        "repo": "move-reminder"
+        "repo": "auszeit"
       }
     ]
   },

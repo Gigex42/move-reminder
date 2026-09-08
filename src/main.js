@@ -14,7 +14,7 @@ function createTray() {
   icon.setTemplateImage(true);
 
   tray = new Tray(icon);
-  tray.setToolTip('Bewegungs-Reminder');
+  tray.setToolTip('Auszeit');
 
   tray.on('click', () => {
     toggleSettingsWindow();
@@ -63,7 +63,7 @@ function openSettingsWindow() {
     width: 440,
     height: 780,
     resizable: false,
-    title: 'Bewegungs-Reminder – Einstellungen',
+    title: 'Auszeit – Einstellungen',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -193,12 +193,12 @@ function isManuallyPaused() {
 function updateTrayTooltip() {
   if (!tray) return;
   if (manualPauseUntil === 'indefinite') {
-    tray.setToolTip('Bewegungs-Reminder (pausiert)');
+    tray.setToolTip('Auszeit (pausiert)');
   } else if (manualPauseUntil) {
     const time = new Date(manualPauseUntil).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-    tray.setToolTip(`Bewegungs-Reminder (pausiert bis ${time})`);
+    tray.setToolTip(`Auszeit (pausiert bis ${time})`);
   } else {
-    tray.setToolTip('Bewegungs-Reminder');
+    tray.setToolTip('Auszeit');
   }
 }
 
